@@ -30,38 +30,104 @@ function saveProfile(){['name','industry','location','audience','offerings','dif
 function openTool(k){currentTool=k;const t=tools[k];document.getElementById('toolEyebrow').textContent='TABLEAI TOOL';document.getElementById('toolTitle').textContent=t.title;document.getElementById('toolDesc').textContent=t.desc;document.getElementById('toolFields').innerHTML=t.fields.map(f=>`<div class="field"><label>${f[1]}</label><textarea id="field_${f[0]}" placeholder="${f[2]}"></textarea></div>`).join('');document.getElementById('output').innerHTML=''}
 function val(id){return (document.getElementById(id)?.value||'').trim()}
 function biz(){return {name:profile.name||'Your business',industry:profile.industry||'your industry',location:profile.location||'your market',audience:profile.audience||'your target customers',offerings:profile.offerings||'your products/services',difference:profile.difference||'your differentiator',personality:profile.personality||'clear and natural',goal:profile.goal||'growth',social:profile.social||'your social channels',offers:profile.offers||'no current offer supplied'}}
-async function generateOutput() {   if (!profile.name) {     alert("Please complete your Business Profile first.");     show("profile");     return;   }    const b = biz();   let request = "";    if (currentTool === "weekly") {     request = val("field_focus") || b.goal;   }    if (currentTool === "content") {     request =       "Format: " +       (val("field_format") || "Reel") +       "
-Topic: " +       (val("field_topic") || b.offerings);   }    if (currentTool === "promotion") {     request =       "Objective: " +       (val("field_objective") || b.goal) +       "
-Details: " +       (val("field_details") || b.offers);   }    if (currentTool === "review") {     request =       "Customer review:
-" +       (val("field_review") || "");   }    if (currentTool === "message") {     request =       "Channel: " +       (val("field_channel") || "WhatsApp") +       "
-Purpose: " +       (val("field_purpose") || "customer update");   }    if (currentTool === "growth") {     request =       "Business challenge:
-" +       (val("field_challenge") || b.goal);   }    const outputBox = document.getElementById("output");    outputBox.innerHTML =     '<div class="result-head"><h3>TABLEAI is thinking...</h3></div>' +     '<div class="output">Generating your personalised result...</div>';    try {     const response = await fetch("/api/generate", {       method: "POST",       headers: {         "Content-Type": "application/json"       },       body: JSON.stringify({         tool: currentTool,         business: b,         request: request       })     });      const data = await response.json();      if (!response.ok) {       throw new Error(data.error || "Generation failed.");     }      lastOutput = data.output;      outputBox.innerHTML =       '<div class="result-head">' +       '<h3>Your TABLEAI result</h3>' +       '<span class="small">AI generated</span>' +       '</div>' +       '<div class="output" id="resultText">' +       escapeHtml(data.output) +       '</div>' +       '<div class="success">' +       'Generated using TABLEAI AI and your business profile.' +       '</div>';    } catch (error) {     console.error(error);      outputBox.innerHTML =       '<div class="notice">' +       'Something went wrong while connecting to TABLEAI AI. Please try again.' +       '</div>';   } } {   if (!profile.name) {     alert("Please complete your Business Profile first.");     show("profile");     return;   }    const b = biz();   let request = "";    if (currentTool === "weekly") {     request = val("field_focus") || b.goal;   }    if (currentTool === "content") {     request =       "Format: " +       (val("field_format") || "Reel") +       "
-Topic: " +       (val("field_topic") || b.offerings);   }    if (currentTool === "promotion") {     request =       "Objective: " +       (val("field_objective") || b.goal) +       "
-Details: " +       (val("field_details") || b.offers);   }    if (currentTool === "review") {     request =       "Customer review:
-" +       (val("field_review") || "");   }    if (currentTool === "message") {     request =       "Channel: " +       (val("field_channel") || "WhatsApp") +       "
-Purpose: " +       (val("field_purpose") || "customer update");   }    if (currentTool === "growth") {     request =       "Business challenge:
-" +       (val("field_challenge") || b.goal);   }    const outputBox = document.getElementById("output");    outputBox.innerHTML =     '<div class="result-head"><h3>TABLEAI is thinking...</h3></div>' +     '<div class="output">Generating your personalised result...</div>';    try {     const response = await fetch("/api/generate", {       method: "POST",       headers: {         "Content-Type": "application/json"       },       body: JSON.stringify({         tool: currentTool,         business: b,         request: request       })     });      const data = await response.json();      if (!response.ok) {       throw new Error(data.error || "Generation failed.");     }      lastOutput = data.output;      outputBox.innerHTML =       '<div class="result-head">' +       '<h3>Your TABLEAI result</h3>' +       '<span class="small">AI generated</span>' +       '</div>' +       '<div class="output" id="resultText">' +       escapeHtml(data.output) +       '</div>' +       '<div class="success">' +       'Generated using TABLEAI AI and your business profile.' +       '</div>';    } catch (error) {     console.error(error);      outputBox.innerHTML =       '<div class="notice">' +       'Something went wrong while connecting to TABLEAI AI. Please try again.' +       '</div>';   } } {   if (!profile.name) {     alert("Please complete your Business Profile first.");     show("profile");     return;   }    const b = biz();   let request = "";    if (currentTool === "weekly") {     request = val("field_focus") || b.goal;   }    if (currentTool === "content") {     request =       "Format: " +       (val("field_format") || "Reel") +       "
-Topic: " +       (val("field_topic") || b.offerings);   }    if (currentTool === "promotion") {     request =       "Objective: " +       (val("field_objective") || b.goal) +       "
-Details: " +       (val("field_details") || b.offers);   }    if (currentTool === "review") {     request =       "Customer review:
-" +       (val("field_review") || "");   }    if (currentTool === "message") {     request =       "Channel: " +       (val("field_channel") || "WhatsApp") +       "
-Purpose: " +       (val("field_purpose") || "customer update");   }    if (currentTool === "growth") {     request =       "Business challenge:
-" +       (val("field_challenge") || b.goal);   }    const outputBox = document.getElementById("output");    outputBox.innerHTML =     '<div class="result-head"><h3>TABLEAI is thinking...</h3></div>' +     '<div class="output">Generating your personalised result...</div>';    try {     const response = await fetch("/api/generate", {       method: "POST",       headers: {         "Content-Type": "application/json"       },       body: JSON.stringify({         tool: currentTool,         business: b,         request: request       })     });      const data = await response.json();      if (!response.ok) {       throw new Error(data.error || "Generation failed.");     }      lastOutput = data.output;      outputBox.innerHTML =       '<div class="result-head">' +       '<h3>Your TABLEAI result</h3>' +       '<span class="small">AI generated</span>' +       '</div>' +       '<div class="output" id="resultText">' +       escapeHtml(data.output) +       '</div>' +       '<div class="success">' +       'Generated using TABLEAI AI and your business profile.' +       '</div>';    } catch (error) {     console.error(error);      outputBox.innerHTML =       '<div class="notice">' +       'Something went wrong while connecting to TABLEAI AI. Please try again.' +       '</div>';   } } {   if (!profile.name) {     alert("Please complete your Business Profile first.");     show("profile");     return;   }    const b = biz();   let request = "";    if (currentTool === "weekly") {     request = val("field_focus") || b.goal;   }    if (currentTool === "content") {     request =       "Format: " +       (val("field_format") || "Reel") +       "
-Topic: " +       (val("field_topic") || b.offerings);   }    if (currentTool === "promotion") {     request =       "Objective: " +       (val("field_objective") || b.goal) +       "
-Details: " +       (val("field_details") || b.offers);   }    if (currentTool === "review") {     request =       "Customer review:
-" +       (val("field_review") || "");   }    if (currentTool === "message") {     request =       "Channel: " +       (val("field_channel") || "WhatsApp") +       "
-Purpose: " +       (val("field_purpose") || "customer update");   }    if (currentTool === "growth") {     request =       "Business challenge:
-" +       (val("field_challenge") || b.goal);   }    const outputBox = document.getElementById("output");    outputBox.innerHTML =     '<div class="result-head"><h3>TABLEAI is thinking...</h3></div>' +     '<div class="output">Generating your personalised result...</div>';    try {     const response = await fetch("/api/generate", {       method: "POST",       headers: {         "Content-Type": "application/json"       },       body: JSON.stringify({         tool: currentTool,         business: b,         request: request       })     });      const data = await response.json();      if (!response.ok) {       throw new Error(data.error || "Generation failed.");     }      lastOutput = data.output;      outputBox.innerHTML =       '<div class="result-head">' +       '<h3>Your TABLEAI result</h3>' +       '<span class="small">AI generated</span>' +       '</div>' +       '<div class="output" id="resultText">' +       escapeHtml(data.output) +       '</div>' +       '<div class="success">' +       'Generated using TABLEAI AI and your business profile.' +       '</div>';    } catch (error) {     console.error(error);      outputBox.innerHTML =       '<div class="notice">' +       'Something went wrong while connecting to TABLEAI AI. Please try again.' +       '</div>';   } } {   if (!profile.name) {     alert("Please complete your Business Profile first.");     show("profile");     return;   }    const b = biz();   let request = "";    if (currentTool === "weekly") {     request = val("field_focus") || b.goal;   }    if (currentTool === "content") {     request =       "Format: " +       (val("field_format") || "Reel") +       "
-Topic: " +       (val("field_topic") || b.offerings);   }    if (currentTool === "promotion") {     request =       "Objective: " +       (val("field_objective") || b.goal) +       "
-Details: " +       (val("field_details") || b.offers);   }    if (currentTool === "review") {     request =       "Customer review:
-" +       (val("field_review") || "");   }    if (currentTool === "message") {     request =       "Channel: " +       (val("field_channel") || "WhatsApp") +       "
-Purpose: " +       (val("field_purpose") || "customer update");   }    if (currentTool === "growth") {     request =       "Business challenge:
-" +       (val("field_challenge") || b.goal);   }    const outputBox = document.getElementById("output");    outputBox.innerHTML =     '<div class="result-head"><h3>TABLEAI is thinking...</h3></div>' +     '<div class="output">Generating your personalised result...</div>';    try {     const response = await fetch("/api/generate", {       method: "POST",       headers: {         "Content-Type": "application/json"       },       body: JSON.stringify({         tool: currentTool,         business: b,         request: request       })     });      const data = await response.json();      if (!response.ok) {       throw new Error(data.error || "Generation failed.");     }      lastOutput = data.output;      outputBox.innerHTML =       '<div class="result-head">' +       '<h3>Your TABLEAI result</h3>' +       '<span class="small">AI generated</span>' +       '</div>' +       '<div class="output" id="resultText">' +       escapeHtml(data.output) +       '</div>' +       '<div class="success">' +       'Generated using TABLEAI AI and your business profile.' +       '</div>';    } catch (error) {     console.error(error);      outputBox.innerHTML =       '<div class="notice">' +       'Something went wrong while connecting to TABLEAI AI. Please try again.' +       '</div>';   } }{if(!profile.name){alert('Please complete your Business Profile first.');show('profile');return}const b=biz();let o='';if(currentTool==='weekly'){const f=val('field_focus')||b.goal;o=`TABLEAI — 7-DAY MARKETING PLAN\n\nBusiness: ${b.name}\nFocus: ${f}\n\nDAY 1 — MONDAY\nContent: Educational / problem-solution\nIdea: Explain one common problem faced by ${b.audience} and how ${b.name} helps.\nCTA: Ask people to learn more or message the business.\n\nDAY 2 — TUESDAY\nContent: Product / service spotlight\nIdea: Highlight one offering: ${b.offerings}.\nCTA: Invite the audience to explore it.\n\nDAY 3 — WEDNESDAY\nContent: Social proof\nIdea: Share a real customer review, result or experience. Use only a genuine customer quote/result.\nCTA: Invite people to try or enquire.\n\nDAY 4 — THURSDAY\nContent: Behind the scenes\nIdea: Show the people, process or story behind ${b.name}.\nCTA: Ask an easy engagement question.\n\nDAY 5 — FRIDAY\nContent: Short-form video\nIdea: A quick Reel showing ${b.offerings}.\nHook: “Here’s something ${b.audience} should know.”\nCTA: Save, share or enquire.\n\nDAY 6 — SATURDAY\nContent: Promotion / conversion\nIdea: Use the real offer currently available: ${b.offers}. If there is no offer, use a product/service spotlight instead.\nCTA: Direct people to the next purchase/enquiry step.\n\nDAY 7 — SUNDAY\nContent: Community / engagement\nIdea: Ask a simple question related to ${b.industry}.\nCTA: Comment or vote.\n\nWEEKLY CHECKLIST\n□ 3 short-form videos\n□ 2 supporting posts/stories\n□ 1 conversion-focused post\n□ Reply to reviews/messages\n□ Track enquiries or sales generated from campaigns`;}
-else if(currentTool==='content'){const format=val('field_format')||'Reel';const topic=val('field_topic')||b.offerings;o=`TABLEAI — ${format.toUpperCase()} CONCEPT\n\nBusiness: ${b.name}\nTopic: ${topic}\n\nHOOK OPTIONS\n1. “If you’re ${b.audience}, this is worth knowing.”\n2. “Here’s why people choose ${b.name}.”\n3. “A simple look at ${topic}.”\n\nCONCEPT\nCreate a ${format} that shows the real product/service, the problem it solves and the reason it is different: ${b.difference}.\n\nSHOT / SLIDE PLAN\n1. Strong opening visual\n2. Show the product/service\n3. Show the key benefit\n4. Show proof or process if genuine\n5. End with the next action\n\nON-SCREEN TEXT\n“${topic}”\n“Made for ${b.audience}”\n“Why choose ${b.name}?”\n\nCAPTION\n${topic} — made for ${b.audience}. Discover what makes ${b.name} different: ${b.difference}.\n\nCTA\nMessage us to learn more / explore the offering.\n\nIMPORTANT: Replace generic lines with the business’s real facts before publishing.`;}
-else if(currentTool==='promotion'){const obj=val('field_objective')||b.goal;const details=val('field_details')||b.offers;o=`TABLEAI — PROMOTION CAMPAIGN\n\nObjective: ${obj}\nBusiness: ${b.name}\nOffer / product details supplied: ${details}\n\nCAMPAIGN IDEA\nBuild a focused campaign around the real offering above. Lead with the customer benefit, explain why it matters and make the next action obvious.\n\nCAMPAIGN MESSAGE\n“Looking for ${b.offerings}? Discover ${b.name} — ${b.difference}. ${details}”\n\nINSTAGRAM / SOCIAL CAPTION\nLooking for something that fits your needs? Explore ${b.offerings} from ${b.name}. ${b.difference}. ${details}\n\nSTORY SEQUENCE\n1. Problem / need\n2. Product or service\n3. Key benefit\n4. Proof, if available\n5. CTA\n\nWHATSAPP VERSION\nHi! We wanted to share an update from ${b.name}. ${details} If you’d like to know more about ${b.offerings}, just reply to this message.\n\nRULE\nDo not publish a price, discount, deadline or claim unless the business has supplied it.`;}
-else if(currentTool==='review'){const r=val('field_review');o=`TABLEAI — REVIEW REPLY\n\nBusiness: ${b.name}\n\nSuggested response:\n“Thank you for taking the time to share your feedback. We’re glad you chose ${b.name} and appreciate your support. Your feedback means a lot to us.”\n\nIf the review is negative:\nAcknowledge the specific concern, apologise where appropriate, avoid arguing, and invite the customer to contact the business directly so the issue can be understood and addressed.\n\nCUSTOMER REVIEW\n${r||'[Paste the review above to create a more specific reply.]'}`;}
-else if(currentTool==='message'){const channel=val('field_channel')||'WhatsApp';const purpose=val('field_purpose')||'customer update';o=`TABLEAI — ${channel.toUpperCase()} MESSAGE\n\nPurpose: ${purpose}\nBusiness: ${b.name}\n\nMESSAGE\nHi! 👋\n\nWe’re reaching out from ${b.name}. We wanted to share an update about ${b.offerings}. ${b.offers}\n\nIf you’d like to know more, simply reply to this message and we’ll be happy to help.\n\n— ${b.name}\n\nPERSONALISATION\nAdd the customer’s name and any verified offer, date, price or product detail before sending.`;}
-else if(currentTool==='growth'){const c=val('field_challenge')||b.goal;o=`TABLEAI — GROWTH IDEAS\n\nBusiness: ${b.name}\nChallenge: ${c}\n\n1. CONTENT ENGINE\nCreate recurring content around customer problems, product/service education and proof.\nSuccess metric: saves, shares and qualified enquiries.\n\n2. CUSTOMER PROOF\nCollect genuine reviews, testimonials or case studies and turn them into weekly content.\nSuccess metric: engagement and conversion from proof content.\n\n3. REFERRAL LOOP\nCreate a simple referral mechanism using a real incentive only if the business chooses one.\nSuccess metric: referred leads/customers.\n\n4. REPEAT CUSTOMER CAMPAIGN\nSend a useful, relevant message to existing customers based on their previous relationship with ${b.name}.\nSuccess metric: repeat enquiries or purchases.\n\n5. COLLABORATION\nIdentify complementary businesses or creators serving ${b.audience} and propose a content/campaign collaboration.\nSuccess metric: qualified reach and leads.\n\n7-DAY EXPERIMENT\nChoose ONE idea. Run it for 7 days. Record the number of posts/messages, reach, enquiries and conversions. Keep what works and change one variable next week.`;}
-lastOutput=o;document.getElementById('output').innerHTML=`<div class="result-head"><h3>Your TABLEAI result</h3><span class="small">Generated instantly</span></div><div class="output" id="resultText">${escapeHtml(o)}</div><div class="success">This V1 uses your saved business profile and produces a ready-to-edit result. Never publish invented claims, prices, offers or customer proof.</div>`}
+async function generateOutput() {
+  if (!profile.name) {
+    alert("Please complete your Business Profile first.");
+    show("profile");
+    return;
+  }
+
+  const b = biz();
+  let request = "";
+
+  if (currentTool === "weekly") {
+    request = val("field_focus") || b.goal;
+  }
+
+  if (currentTool === "content") {
+    request =
+      "Format: " +
+      (val("field_format") || "Reel") +
+      "\nTopic: " +
+      (val("field_topic") || b.offerings);
+  }
+
+  if (currentTool === "promotion") {
+    request =
+      "Objective: " +
+      (val("field_objective") || b.goal) +
+      "\nDetails: " +
+      (val("field_details") || b.offers);
+  }
+
+  if (currentTool === "review") {
+    request =
+      "Customer review:\n" +
+      (val("field_review") || "");
+  }
+
+  if (currentTool === "message") {
+    request =
+      "Channel: " +
+      (val("field_channel") || "WhatsApp") +
+      "\nPurpose: " +
+      (val("field_purpose") || "customer update");
+  }
+
+  if (currentTool === "growth") {
+    request =
+      "Business challenge:\n" +
+      (val("field_challenge") || b.goal);
+  }
+
+  const outputBox = document.getElementById("output");
+
+  outputBox.innerHTML =
+    '<div class="result-head"><h3>TABLEAI is thinking...</h3></div>' +
+    '<div class="output">Generating your personalised result...</div>';
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        tool: currentTool,
+        business: b,
+        request: request
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Generation failed.");
+    }
+
+    lastOutput = data.output;
+
+    outputBox.innerHTML =
+      '<div class="result-head">' +
+      '<h3>Your TABLEAI result</h3>' +
+      '<span class="small">AI generated</span>' +
+      '</div>' +
+      '<div class="output" id="resultText">' +
+      escapeHtml(data.output) +
+      '</div>' +
+      '<div class="success">' +
+      'Generated using TABLEAI AI and your business profile.' +
+      '</div>';
+
+  } catch (error) {
+    console.error(error);
+
+    outputBox.innerHTML =
+      '<div class="notice">' +
+      'Something went wrong while connecting to TABLEAI AI. Please try again.' +
+      '</div>';
+  }
+}
 function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function copyOutput(){if(!lastOutput){alert('Generate an output first.');return}navigator.clipboard.writeText(lastOutput).then(()=>alert('Copied!'))}
 function downloadOutput(){if(!lastOutput){alert('Generate an output first.');return}const blob=new Blob([lastOutput],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`TABLEAI-${currentTool}-output.txt`;a.click();URL.revokeObjectURL(a.href)}
