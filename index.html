@@ -1,84 +1,295 @@
-import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TABLEAI — AI Marketing & Growth Assistant</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#f6f7fb;color:#17181c}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.side{width:245px;background:#111217;color:#fff;padding:24px 16px;position:fixed;inset:0 auto 0 0}
+.logo{font-size:25px;font-weight:800;letter-spacing:-1px;padding:8px 12px}
+.tag{color:#9da1ad;font-size:12px;padding:0 12px 24px}
+.nav button{display:block;width:100%;border:0;background:transparent;color:#c9cbd2;text-align:left;padding:12px;border-radius:10px;margin:3px 0}
+.nav button:hover,.nav button.active{background:#262831;color:#fff}
+.main{margin-left:245px;width:calc(100% - 245px);padding:32px;max-width:1300px}
+.top{display:flex;justify-content:space-between;gap:20px;align-items:center}
+.eyebrow{color:#6b6f7b;font-size:13px}
+.title{font-size:34px;letter-spacing:-1px;margin:4px 0}
+.sub{color:#70737d;margin:0}
+.profile{background:#fff;border:1px solid #e6e7eb;border-radius:16px;padding:18px;margin:28px 0}
+.profile h3{margin:0 0 8px}
+.pill{display:inline-block;background:#f0f1f5;border-radius:999px;padding:6px 10px;font-size:12px;margin:3px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:#fff;border:1px solid #e6e7eb;border-radius:18px;padding:22px;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;transition:.15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px #11121710}
+.icon{font-size:28px}
+.card h3{margin:12px 0 6px}
+.card p{color:#6f727c;font-size:14px;line-height:1.45}
+.primary{border:0;background:#111217;color:#fff;padding:11px 15px;border-radius:10px}
+.secondary{border:1px solid #dddfe5;background:#fff;padding:10px 14px;border-radius:10px}
+.view{display:none}
+.view.active{display:block}
+.form{background:#fff;border:1px solid #e6e7eb;border-radius:18px;padding:24px;max-width:850px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;border:1px solid #dfe1e7;border-radius:10px;padding:11px;background:#fff}
+.field textarea{min-height:90px;resize:vertical}
+.output{white-space:pre-wrap;background:#111217;color:#f5f5f7;border-radius:14px;padding:18px;line-height:1.55;margin-top:18px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.notice{background:#fff8df;border:1px solid #f1df9a;padding:12px 14px;border-radius:12px;color:#6d5a13;margin:18px 0;font-size:13px}
+.success{background:#eefbf2;border:1px solid #b9e6c4;padding:12px 14px;border-radius:12px;color:#216b34;margin:18px 0;font-size:13px}
+.back{margin-bottom:18px}
+.small{font-size:12px;color:#7b7e88}
+.result-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+.result-head h3{margin:0}
+.result-actions{display:flex;gap:8px}
+.danger{color:#8b3030}
+@media(max-width:850px){
+.side{width:70px}
+.logo{font-size:18px;padding:8px}
+.tag,.nav span{display:none}
+.main{margin-left:70px;width:calc(100% - 70px);padding:20px}
+.grid{grid-template-columns:1fr}
+.row{grid-template-columns:1fr}
+.title{font-size:28px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="logo">TABLEAI</div>
+<div class="tag">AI marketing & growth assistant</div>
+<nav class="nav">
+<button class="active" data-view="dashboard">⌂ <span>Dashboard</span></button>
+<button data-view="profile">◉ <span>Business Profile</span></button>
+<button data-view="tool" data-tool="weekly">◷ <span>Plan My Week</span></button>
+<button data-view="tool" data-tool="content">✦ <span>Create Content</span></button>
+<button data-view="tool" data-tool="promotion">↗ <span>Create Promotion</span></button>
+<button data-view="tool" data-tool="review">★ <span>Reply to Review</span></button>
+<button data-view="tool" data-tool="message">✉ <span>Customer Message</span></button>
+<button data-view="tool" data-tool="growth">⚡ <span>Growth Ideas</span></button>
+</nav>
+</aside>
+
+<main class="main">
+<section id="dashboard" class="view active">
+<div class="top">
+<div>
+<div class="eyebrow">WELCOME TO TABLEAI</div>
+<h1 class="title">Your AI marketing assistant.</h1>
+<p class="sub">Turn your business information into practical marketing actions.</p>
+</div>
+<button class="secondary" onclick="show('profile')">Edit business</button>
+</div>
+<div class="profile" id="profileSummary"></div>
+<div class="success">V1 is usable without an API key: TABLEAI can generate structured marketing outputs instantly. An optional AI connector can be added later for deeper customisation.</div>
+<div class="grid" id="cards"></div>
+</section>
+
+<section id="profile" class="view">
+<button class="secondary back" onclick="show('dashboard')">← Dashboard</button>
+<div class="form">
+<h2>Business Profile</h2>
+<p class="sub">Fill this once. TABLEAI uses it across every tool.</p>
+<div class="row">
+<div class="field"><label>Business / startup name</label><input id="name"></div>
+<div class="field"><label>Industry</label><input id="industry" placeholder="e.g. fashion, SaaS, fitness"></div>
+</div>
+<div class="row">
+<div class="field"><label>Location</label><input id="location"></div>
+<div class="field"><label>Target customers</label><input id="audience"></div>
+</div>
+<div class="field"><label>Products / services</label><textarea id="offerings"></textarea></div>
+<div class="field"><label>What makes you different?</label><textarea id="difference"></textarea></div>
+<div class="row">
+<div class="field"><label>Brand personality</label><input id="personality" placeholder="e.g. bold, friendly, premium"></div>
+<div class="field"><label>Main marketing goal</label><input id="goal" placeholder="e.g. more leads, sales, awareness"></div>
+</div>
+<div class="field"><label>Social media / website</label><input id="social"></div>
+<div class="field"><label>Current offers or campaigns</label><textarea id="offers"></textarea></div>
+<button class="primary" onclick="saveProfile()">Save business profile</button>
+</div>
+</section>
+
+<section id="tool" class="view">
+<button class="secondary back" onclick="show('dashboard')">← Dashboard</button>
+<div class="form">
+<div class="eyebrow" id="toolEyebrow"></div>
+<h2 id="toolTitle"></h2>
+<p class="sub" id="toolDesc"></p>
+<div id="toolFields"></div>
+<div class="actions">
+<button class="primary" onclick="generateOutput()">Generate with TABLEAI</button>
+<button class="secondary" onclick="copyOutput()">Copy output</button>
+<button class="secondary" onclick="downloadOutput()">Download .txt</button>
+</div>
+<div id="output"></div>
+</div>
+</section>
+</main>
+</div>
+
+<script>
+const tools={
+weekly:{icon:'◷',title:'Plan My Week',desc:'Create a practical 7-day marketing plan.',fields:[['focus','What should this week focus on?','e.g. sales, awareness, launch, engagement']]},
+content:{icon:'✦',title:'Create Content',desc:'Create a post or Reel concept ready to publish.',fields:[['format','Content format','Reel, carousel, post, story'],['topic','What should the content be about?','e.g. a product, service, customer problem, founder story']]},
+promotion:{icon:'↗',title:'Create Promotion',desc:'Build a campaign around a real product, service or offer.',fields:[['objective','Promotion objective','e.g. increase weekend sales'],['details','Product/service or offer details','Do not add a discount unless you provide one.']]},
+review:{icon:'★',title:'Reply to Review',desc:'Write a natural response to a customer review.',fields:[['review','Customer review','Paste the review here.']]},
+message:{icon:'✉',title:'Customer Message',desc:'Create a customer-facing WhatsApp, DM or email message.',fields:[['channel','Channel','WhatsApp, Instagram DM, email'],['purpose','Message purpose','e.g. announce launch, follow-up, feedback']]},
+growth:{icon:'⚡',title:'Growth Ideas',desc:'Generate practical marketing and growth experiments.',fields:[['challenge','What do you want to improve?','e.g. more leads, repeat customers, awareness']]}
+};
+
+let currentTool='';
+let profile=JSON.parse(localStorage.getItem('tableai_profile')||'{}');
+let lastOutput='';
+
+function show(id,tool){
+document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+if(id==='tool')openTool(tool);
+if(id==='dashboard')renderSummary();
+document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id&&(id!=='tool'||b.dataset.tool===tool)));
+}
+
+function renderCards(){
+document.getElementById('cards').innerHTML=Object.entries(tools).map(([k,t])=>`<div class="card"><div><div class="icon">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p></div><button class="primary" onclick="show('tool','${k}')">Open tool →</button></div>`).join('');
+}
+
+function renderSummary(){
+const p=profile;
+document.getElementById('profileSummary').innerHTML=p.name?`<h3>${escapeHtml(p.name)}</h3><span class="pill">${escapeHtml(p.industry||'Industry not set')}</span><span class="pill">${escapeHtml(p.audience||'Target audience not set')}</span><p class="sub">Goal: ${escapeHtml(p.goal||'Set your main marketing goal')}</p>`:`<h3>Set up your business</h3><p class="sub">Add your business information once so every TABLEAI tool can personalize its output.</p><br><button class="primary" onclick="show('profile')">Set up now</button>`;
+}
+
+function loadProfile(){
+['name','industry','location','audience','offerings','difference','personality','goal','social','offers'].forEach(k=>{document.getElementById(k).value=profile[k]||''});
+}
+
+function saveProfile(){
+['name','industry','location','audience','offerings','difference','personality','goal','social','offers'].forEach(k=>profile[k]=document.getElementById(k).value.trim());
+localStorage.setItem('tableai_profile',JSON.stringify(profile));
+renderSummary();
+show('dashboard');
+}
+
+function openTool(k){
+currentTool=k;
+const t=tools[k];
+document.getElementById('toolEyebrow').textContent='TABLEAI TOOL';
+document.getElementById('toolTitle').textContent=t.title;
+document.getElementById('toolDesc').textContent=t.desc;
+document.getElementById('toolFields').innerHTML=t.fields.map(f=>`<div class="field"><label>${f[1]}</label><textarea id="field_${f[0]}" placeholder="${f[2]}"></textarea></div>`).join('');
+document.getElementById('output').innerHTML='';
+}
+
+function val(id){
+return (document.getElementById(id)?.value||'').trim();
+}
+
+function biz(){
+return {
+name:profile.name||'Your business',
+industry:profile.industry||'your industry',
+location:profile.location||'your market',
+audience:profile.audience||'your target customers',
+offerings:profile.offerings||'your products/services',
+difference:profile.difference||'your differentiator',
+personality:profile.personality||'clear and natural',
+goal:profile.goal||'growth',
+social:profile.social||'your social channels',
+offers:profile.offers||'no current offer supplied'
+};
+}
+
+async function generateOutput(){
+if(!profile.name){
+alert("Please complete your Business Profile first.");
+show("profile");
+return;
+}
+
+const b=biz();
+let request="";
+
+if(currentTool==="weekly"){
+request=val("field_focus")||b.goal;
+}
+
+if(currentTool==="content"){
+request="Format: "+(val("field_format")||"Reel")+"\nTopic: "+(val("field_topic")||b.offerings);
+}
+
+if(currentTool==="promotion"){
+request="Objective: "+(val("field_objective")||b.goal)+"\nDetails: "+(val("field_details")||b.offers);
+}
+
+if(currentTool==="review"){
+request="Customer review:\n"+(val("field_review")||"");
+}
+
+if(currentTool==="message"){
+request="Channel: "+(val("field_channel")||"WhatsApp")+"\nPurpose: "+(val("field_purpose")||"customer update");
+}
+
+if(currentTool==="growth"){
+request="Business challenge:\n"+(val("field_challenge")||b.goal);
+}
+
+const outputBox=document.getElementById("output");
+outputBox.innerHTML='<div class="result-head"><h3>TABLEAI is thinking...</h3></div><div class="output">Generating your personalised result...</div>';
+
+try{
+const response=await fetch("/api/generate",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({tool:currentTool,business:b,request:request})
 });
 
-export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed",
-    });
-  }
+const data=await response.json();
 
-  // Check API key
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({
-      error: "OPENAI_API_KEY is missing in Vercel.",
-    });
-  }
-
-  try {
-    const { tool, business, request } = req.body || {};
-
-    // Check required information
-    if (!business) {
-      return res.status(400).json({
-        error: "Business profile is missing.",
-      });
-    }
-
-    if (!tool) {
-      return res.status(400).json({
-        error: "TABLEAI tool is missing.",
-      });
-    }
-
-    const prompt = `
-You are TABLEAI, an AI marketing and growth assistant for businesses and startups.
-
-Your job is to create practical, natural and ready-to-use marketing output.
-
-IMPORTANT RULES:
-- Never invent prices, discounts, products, services, reviews, awards, statistics or business claims.
-- Only use information provided in the business profile.
-- If something is missing, make it clear that it is a suggestion.
-- Keep the writing natural and human.
-- Avoid generic AI-sounding language.
-- Avoid excessive emojis.
-- Make the result useful for a busy business owner.
-- Give specific and actionable ideas.
-- Write in a clear and easy-to-use format.
-
-BUSINESS PROFILE:
-${JSON.stringify(business, null, 2)}
-
-TABLEAI TOOL:
-${tool}
-
-USER REQUEST:
-${request || "Create the most useful output for this request."}
-
-Create the final answer for the business owner now.
-`;
-
-    const response = await client.responses.create({
-      model: "gpt-5.6-luna",
-      input: prompt,
-    });
-
-    return res.status(200).json({
-      success: true,
-      output: response.output_text,
-    });
-
-  } catch (error) {
-    console.error("TABLEAI ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      error: error?.message || "Unknown TABLEAI server error.",
-    });
-  }
+if(!response.ok){
+throw new Error(data.error||"Generation failed.");
 }
+
+lastOutput=data.output;
+
+outputBox.innerHTML='<div class="result-head"><h3>Your TABLEAI result</h3><span class="small">AI generated</span></div><div class="output" id="resultText">'+escapeHtml(data.output)+'</div><div class="success">Generated using TABLEAI AI and your business profile.</div>';
+
+}catch(error){
+console.error(error);
+outputBox.innerHTML='<div class="notice">Something went wrong while connecting to TABLEAI AI. Please try again.</div>';
+}
+}
+
+function escapeHtml(s){
+return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+function copyOutput(){
+if(!lastOutput){alert('Generate an output first.');return}
+navigator.clipboard.writeText(lastOutput).then(()=>alert('Copied!'));
+}
+
+function downloadOutput(){
+if(!lastOutput){alert('Generate an output first.');return}
+const blob=new Blob([lastOutput],{type:'text/plain'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download=`TABLEAI-${currentTool}-output.txt`;
+a.click();
+URL.revokeObjectURL(a.href);
+}
+
+renderCards();
+loadProfile();
+renderSummary();
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view,b.dataset.tool)));
+</script>
+</body>
+</html>
